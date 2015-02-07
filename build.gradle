@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.0'
+}
+
+task runScript(type: JavaExec) {
+    description 'Run Groovy script'
+    
+    // Set main property to name of Groovy script class.    
+    main = 'com.facio.Main'
+    
+    // Set classpath for running the Groovy script.
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+

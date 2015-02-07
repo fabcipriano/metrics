@@ -1,0 +1,4 @@
+# folder to ignore
+build
+.gradle
+
