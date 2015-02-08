@@ -6,8 +6,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.IllegalArgumentException;
+
 class MetricsTest {
 	final shouldFail = new GroovyTestCase().&shouldFail
+	
+	//small number
+	private static final double DELTA = 1e-15;
 
 	@Before
 	public void setUp() throws Exception {
@@ -21,13 +26,17 @@ class MetricsTest {
 	public void testCalculateMediaFromFile() {
 		Metrics m = new Metrics();
 		
-		def media = m.calculateMediaFromFile(null);
+		def info = m.calculateMediaFromFile(null);
 		
-		assertEquals("must be zero when file is null", 0, media);
+		assertEquals("must be null when file is null", null, info);
 		
-		media = m.calculateMediaFromFile(new LogFileMock());
+		info = m.calculateMediaFromFile(new LogFileMock());
 		
-		assertEquals("media from mock file", 3210.000, media);		
+		assertEquals("media from mock file", 3210.000, info.totalMedia);
+		assertEquals("number of lines from mock file", 5, info.countLines);
+		assertEquals("total time in ms from mock file", 16050, info.total, DELTA);
+		assertEquals("maxtime request from file", 12990, info.maxTimeRequest);
+		assertEquals("max request url from file", "/fff7a7169e5/lastPayments/searchLastPayments/agreement/24421066/35837900810/84308/agreement?_=1422928953397", info.maxRequestUrl);			
 	}
 
 	@Test
@@ -37,20 +46,47 @@ class MetricsTest {
 		Metrics m = new Metrics();
 		
 		def result = m.parseRequestTime(null);
-		assertEquals("must be zero when string is null", 0, result);
+		assertEquals("must be null when string is null", null, result);
 		
 		result = m.parseRequestTime("");
-		assertEquals("must be zero when string is empty", 0, result);
+		assertEquals("must be nullo when string is empty", null, result);
 		
 		result = m.parseRequestTime("    ");
-		assertEquals("must be zero when string is blank", 0, result);
+		assertEquals("must be null when string is blank", null, result);
 		
 		result = m.parseRequestTime(okLogLine);
-		assertEquals("parse log line with request time", 1328, result);		
+		assertEquals("parse log line with request time", 1328, result.requestTime);
+		assertEquals("parse log line with url", "/fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111", result.url);
+		assertEquals("parse log line with date", "03/02/2015 00:00:36", result.dateTime.format("dd/MM/yyyy HH:mm:ss"));
 		
 		shouldFail(NumberFormatException) {
 			m.parseRequestTime(badFormatLogLine);
 		}		
+	}
+	
+	@Test
+	public void testConvertLogFormat2Datetime() {
+		Metrics m = new Metrics();
+		
+		shouldFail(java.lang.IllegalArgumentException) {
+			m.convertLogFormat2Datetime(null);
+		}		
+		
+		shouldFail(java.lang.IllegalArgumentException) {
+			m.convertLogFormat2Datetime("");
+		}		
+		
+		shouldFail(java.lang.IllegalArgumentException) {
+			m.convertLogFormat2Datetime("   ");
+		}
+		
+		//invalid format
+		shouldFail(java.text.ParseException) {
+			m.convertLogFormat2Datetime("24/02/1990 01:02:30");
+		}
+		
+		def result = m.convertLogFormat2Datetime("[03/Feb/2015:00:00:36")
+		assertEquals("must be null when string is null", "03/02/2015 00:00:36", result.format("dd/MM/yyyy HH:mm:ss"));
 	}
 
 }
