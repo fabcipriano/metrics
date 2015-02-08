@@ -10,11 +10,12 @@ dependencies {
 	testCompile 'junit:junit:4.11'
 }
 
-task runScript(type: JavaExec) {
+task runScript(dependsOn: compileGroovy, type: JavaExec) {
     description 'Run Groovy script'
     
     // Set main property to name of Groovy script class.    
     main = 'com.facio.Main'
+	args = [System.properties['filename.log']]
     
     // Set classpath for running the Groovy script.
     classpath = sourceSets.main.runtimeClasspath

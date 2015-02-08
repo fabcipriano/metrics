@@ -36,6 +36,8 @@ class MetricsTest {
 		assertEquals("number of lines from mock file", 5, info.countLines);
 		assertEquals("total time in ms from mock file", 16050, info.total, DELTA);
 		assertEquals("maxtime request from file", 12990, info.maxTimeRequest);
+		assertEquals("maxtime request datetime from file", "03/02/2015 00:02:47", info.maxTimeRequestDateTime.format("dd/MM/yyyy HH:mm:ss"));
+		
 		assertEquals("max request url from file", "/fff7a7169e5/lastPayments/searchLastPayments/agreement/24421066/35837900810/84308/agreement?_=1422928953397", info.maxRequestUrl);			
 	}
 
@@ -87,6 +89,19 @@ class MetricsTest {
 		
 		def result = m.convertLogFormat2Datetime("[03/Feb/2015:00:00:36")
 		assertEquals("must be null when string is null", "03/02/2015 00:00:36", result.format("dd/MM/yyyy HH:mm:ss"));
+	}
+	
+	@Test
+	public void testRegexFileLog() {
+		def filename01 = "localhost_access_log.2015-02-03.log"
+		def filename02 = "localhost_access_log.2015-01-01.log"
+		def wrongfilename = "localhost_access_log.2015-02-03.log.tgz"
+		def pattern = ~/localhost_access_log\.[\d]{4}-[\d]{2}-[\d]{2}.log/
+		
+		assertTrue(pattern.matcher(filename01).matches())
+		assertTrue(pattern.matcher(filename02).matches())
+		
+		assertFalse(pattern.matcher(wrongfilename).matches())
 	}
 
 }

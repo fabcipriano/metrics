@@ -9,6 +9,7 @@ class Metrics {
 		
 		def maxTimeRequest = 0;
 		def maxRequestUrl = ""
+		def datetimeRequest = ""
 		
 		def infoMetrics = null
 		file?.eachLine {
@@ -18,6 +19,7 @@ class Metrics {
 			if (info.requestTime > maxTimeRequest) {
 				maxTimeRequest = info.requestTime;
 				maxRequestUrl = info.url
+				datetimeRequest = info.dateTime
 			}
 			count++
 			total += info.requestTime;
@@ -26,10 +28,12 @@ class Metrics {
 		if (count) {
 			media = total.divide(count, 3, BigDecimal.ROUND_HALF_UP);
 			infoMetrics = [
+				"filename" : file.toString().split("/")[-1], 
 				"total":total, 
 				"countLines":count, 
 				"totalMedia":media,
 				"maxTimeRequest" : maxTimeRequest,
+				"maxTimeRequestDateTime" : datetimeRequest,
 				"maxRequestUrl" : maxRequestUrl]
 		} 
 		
