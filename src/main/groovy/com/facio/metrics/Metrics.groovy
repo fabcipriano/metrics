@@ -13,7 +13,6 @@ class Metrics {
 		file?.eachLine {
 			
 			def requestTime = parseRequestTime(it)
-			println "add requestTime ${requestTime}"
 			
 			count++
 			total += requestTime;
@@ -27,10 +26,10 @@ class Metrics {
 	}
 	
 	def parseRequestTime(String message) {
-		def tokens = message?.split(" ");
+		def tokens = message?.split(" ")
 		
 		if (isValidFormatMessage(tokens)) {
-			tokens[-2].toInteger();
+			tokens[-2].toInteger()
 		} else {
 			return 0
 		}

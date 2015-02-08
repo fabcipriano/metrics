@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 class MetricsTest {
+	final shouldFail = new GroovyTestCase().&shouldFail
 
 	@Before
 	public void setUp() throws Exception {
@@ -31,7 +32,8 @@ class MetricsTest {
 
 	@Test
 	public void testParseRequestTime() {
-		def logLine = """10.203.30.66 - - [03/Feb/2015:00:00:36 -0200] "GET /fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111 HTTP/1.1" 200 14384 1328 ms"""
+		def okLogLine = """10.203.30.66 - - [03/Feb/2015:00:00:36 -0200] "GET /fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111 HTTP/1.1" 200 14384 1328 ms"""
+		def badFormatLogLine = """10.203.30.66 - - [03/Feb/2015:00:00:36 -0200] "GET /fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111 HTTP/1.1" 200 14384 ababababa ms"""
 		Metrics m = new Metrics();
 		
 		def result = m.parseRequestTime(null);
@@ -43,9 +45,12 @@ class MetricsTest {
 		result = m.parseRequestTime("    ");
 		assertEquals("must be zero when string is blank", 0, result);
 		
-		result = m.parseRequestTime(logLine);
+		result = m.parseRequestTime(okLogLine);
 		assertEquals("parse log line with request time", 1328, result);		
 		
+		shouldFail(NumberFormatException) {
+			m.parseRequestTime(badFormatLogLine);
+		}		
 	}
 
 }
@@ -60,8 +65,6 @@ class LogFileMock {
 		]
 
 	def eachLine(closure) {
-		println 'Calling MOCK File implementation...'
 		lines.each {line -> closure(line)}
-		println 'MOCK File implementation finished.'
 	}
 }
