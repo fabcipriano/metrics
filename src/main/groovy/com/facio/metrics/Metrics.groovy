@@ -6,11 +6,11 @@ class Metrics {
 	def media
 	BigDecimal total
 	
-	def calculateMediaFromFile(File f) {
+	def calculateMediaFromFile(file) {
 		count = 0
 		media = 0
 		total = 0
-		f?.eachLine {
+		file?.eachLine {
 			
 			def requestTime = parseRequestTime(it)
 			println "add requestTime ${requestTime}"
