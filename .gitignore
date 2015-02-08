@@ -6,3 +6,4 @@ build
 # files to ignore
 .classpath
 .project
+/bin/
