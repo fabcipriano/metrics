@@ -1,7 +1,7 @@
 package com.facio.metrics
 
 class Metrics {
-	
+		
 	def calculateMediaFromFile(file) {
 		def count = 0
 		def media = 0
@@ -10,15 +10,17 @@ class Metrics {
 		def maxTimeRequest = 0;
 		def maxRequestUrl = ""
 		def datetimeRequest = ""
+		def maxRequestSize = 0
 		
 		def infoMetrics = null
 		file?.eachLine {
 			
-			def info = parseRequestTime(it)
+			def info = parseLogLine(it)
 			
 			if (info.requestTime > maxTimeRequest) {
 				maxTimeRequest = info.requestTime;
 				maxRequestUrl = info.url
+				maxRequestSize = info.size
 				datetimeRequest = info.dateTime
 			}
 			count++
@@ -34,21 +36,29 @@ class Metrics {
 				"totalMedia":media,
 				"maxTimeRequest" : maxTimeRequest,
 				"maxTimeRequestDateTime" : datetimeRequest,
-				"maxRequestUrl" : maxRequestUrl]
+				"maxRequestUrl" : maxRequestUrl,
+				"maxRequestSize" : maxRequestSize]
 		} 
 		
 		infoMetrics
 	}
 	
-	def parseRequestTime(String message) {
+	def parseLogLine(String message) {
 		def tokens = message?.split(" ")
 		def info = null
+		def sizeInBytes = 0
 		
 		if (isValidFormatMessage(tokens)) {
+			if (tokens[-3]?.isNumber()) {
+				sizeInBytes = tokens[-3].toInteger()
+			}
+			
 			info = [
+				"ip" : tokens[0],
 				"requestTime" : tokens[-2].toInteger(), 
 				"url": tokens[6],
-				"dateTime": convertLogFormat2Datetime(tokens[3])]
+				"dateTime": convertLogFormat2Datetime(tokens[3]),
+				"size": sizeInBytes]
 		} 
 		
 		info

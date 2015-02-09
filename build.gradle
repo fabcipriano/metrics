@@ -7,6 +7,7 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.0'
+	compile 'mysql:mysql-connector-java:5.1.30'
 	testCompile 'junit:junit:4.11'
 }
 
@@ -14,8 +15,11 @@ task runScript(dependsOn: compileGroovy, type: JavaExec) {
     description 'Run Groovy script'
     
     // Set main property to name of Groovy script class.    
-    main = 'com.facio.Main'
-	args = [System.properties['filename.log']]
+    main = 'com.facio.Store'
+	def file = System.properties['filename.log']
+	if (file) {
+		args = [file]
+	}
     
     // Set classpath for running the Groovy script.
     classpath = sourceSets.main.runtimeClasspath

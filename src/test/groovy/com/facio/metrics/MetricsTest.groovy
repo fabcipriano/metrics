@@ -36,6 +36,7 @@ class MetricsTest {
 		assertEquals("number of lines from mock file", 5, info.countLines);
 		assertEquals("total time in ms from mock file", 16050, info.total, DELTA);
 		assertEquals("maxtime request from file", 12990, info.maxTimeRequest);
+		assertEquals("maxtime request size from file", 9659, info.maxRequestSize);
 		assertEquals("maxtime request datetime from file", "03/02/2015 00:02:47", info.maxTimeRequestDateTime.format("dd/MM/yyyy HH:mm:ss"));
 		
 		assertEquals("max request url from file", "/fff7a7169e5/lastPayments/searchLastPayments/agreement/24421066/35837900810/84308/agreement?_=1422928953397", info.maxRequestUrl);			
@@ -47,22 +48,24 @@ class MetricsTest {
 		def badFormatLogLine = """10.203.30.66 - - [03/Feb/2015:00:00:36 -0200] "GET /fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111 HTTP/1.1" 200 14384 ababababa ms"""
 		Metrics m = new Metrics();
 		
-		def result = m.parseRequestTime(null);
+		def result = m.parseLogLine(null);
 		assertEquals("must be null when string is null", null, result);
 		
-		result = m.parseRequestTime("");
+		result = m.parseLogLine("");
 		assertEquals("must be nullo when string is empty", null, result);
 		
-		result = m.parseRequestTime("    ");
+		result = m.parseLogLine("    ");
 		assertEquals("must be null when string is blank", null, result);
 		
-		result = m.parseRequestTime(okLogLine);
+		result = m.parseLogLine(okLogLine);
 		assertEquals("parse log line with request time", 1328, result.requestTime);
 		assertEquals("parse log line with url", "/fff7a7169e5/callPendency/showPendency/878628/31872877?_=1422928843111", result.url);
+		assertEquals("parse log line with size", 14384, result.size);
+		assertEquals("parse log line with ip", "10.203.30.66", result.ip);
 		assertEquals("parse log line with date", "03/02/2015 00:00:36", result.dateTime.format("dd/MM/yyyy HH:mm:ss"));
 		
 		shouldFail(NumberFormatException) {
-			m.parseRequestTime(badFormatLogLine);
+			m.parseLogLine(badFormatLogLine);
 		}		
 	}
 	
