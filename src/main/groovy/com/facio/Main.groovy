@@ -22,7 +22,7 @@ file = new File(args[0])
 if (file.isFile()) {
 	printStatisticsFromFile(file)
 } else {
-println "===== Statistics From Files ====="
+	println "===== Statistics From Files ====="
 	file.eachFileMatch FileType.FILES, ~/localhost_access_log\.[\d]{4}-[\d]{2}-[\d]{2}.log/ ,
 			{ 
 				printStatisticsFromFile(it) 

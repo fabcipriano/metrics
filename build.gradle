@@ -15,7 +15,8 @@ task runScript(dependsOn: compileGroovy, type: JavaExec) {
     description 'Run Groovy script'
     
     // Set main property to name of Groovy script class.    
-    main = 'com.facio.Store'
+    //main = 'com.facio.Main'
+	main = 'com.facio.CSVGen'
 	def file = System.properties['filename.log']
 	if (file) {
 		args = [file]
