@@ -14,15 +14,20 @@ dependencies {
 task runScript(dependsOn: compileGroovy, type: JavaExec) {
     description 'Run Groovy script'
     
-    // Set main property to name of Groovy script class.    
+    def script = System.properties['script.name']
+    
+    // Set main property to name of Groovy script class.
+    main = script
+    
     //main = 'com.facio.Main'
-	main = 'com.facio.CSVGen'
+	//main = 'com.facio.CSVGen'
 	def file = System.properties['filename.log']
 	if (file) {
 		args = [file]
 	}
     
     // Set classpath for running the Groovy script.
+    //gradle runScript -q -Dscript.name=com.facio.Main -Dfilename.log=/home/fabiano/tmp/logs/visao01/ > /home/fabiano/tmp/visao01.txt
     classpath = sourceSets.main.runtimeClasspath
 }
 

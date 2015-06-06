@@ -10,7 +10,9 @@ class Metrics {
         def maxTimeRequest = 0;
         def maxRequestUrl = ""
         def datetimeRequest = ""
-        def maxRequestSize = 0        
+        def maxRequestSize = 0
+        def numberRequestAboveLimit = 0
+        def limit = 5000        
         def infoMetrics = null
         
         testMyLabel:
@@ -25,6 +27,12 @@ class Metrics {
                 maxRequestSize = info.size
                 datetimeRequest = info.dateTime
             }
+            
+            if (info.requestTime > limit) {
+                numberRequestAboveLimit++
+                //println "---------->[INFO]:${info}"
+            }
+            
             count++
             total += info.requestTime;
         }        
@@ -39,7 +47,8 @@ class Metrics {
                 "maxTimeRequest" : maxTimeRequest,
                 "maxTimeRequestDateTime" : datetimeRequest,
                 "maxRequestUrl" : maxRequestUrl,
-                "maxRequestSize" : maxRequestSize]
+                "maxRequestSize" : maxRequestSize,
+                "numberRequestAboveLimit": numberRequestAboveLimit]
         } 
         
         infoMetrics

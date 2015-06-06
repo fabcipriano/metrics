@@ -39,10 +39,10 @@ class CSVFormat {
 		if (file.isFile()) {
 			
 			def out = new File(outputFilename)
-			
+			println "save to ${out}"
 			out.withWriter { writer ->
 				
-				writer.writeLine("filename;total;countLines;totalMedia;maxTimeRequest;maxTimeRequestDateTime;maxRequestUrl;maxRequestSize")				
+				writer.writeLine("filename;total;countLines;totalMedia;maxTimeRequest;maxTimeRequestDateTime;maxRequestUrl;maxRequestSize;numberRequestAboveLimit")				
 				file.eachLine { line ->
 					def parsed = linetxt2csv(line)
 					if (parsed) {

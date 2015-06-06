@@ -14,4 +14,6 @@ if (file.isFile()) {
 	csv = new CSVFormat()
 	
 	csv.convertFile2csv(file, "out.csv")
+} else {
+    println '[ERROR] Please inform a file insteadof a directory !'
 }
